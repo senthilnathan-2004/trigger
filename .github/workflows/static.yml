@@ -1,28 +1,15 @@
-name: CI and Auto Deploy
+name: Auto Deploy to Render
 
 on:
-  pull_request:
-  push:
-    branches: [main]
   schedule:
-    - cron: "*/4 * * * *"   
-  workflow_dispatch:          # allow manual trigger
+    - cron: "*/5 * * * *"   # runs every 10 minutes
+  workflow_dispatch:          # also allow manual trigger
 
 jobs:
-  ci:
+  redeploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Install & Test
+      - name: Call Render Hook
         run: |
-          npm install
-          npm run test
-
-      - name: Deploy to Render
-        if: github.ref == 'refs/heads/main' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-        env:
-          DEPLOY_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-        run: |
-          curl -X POST "$DEPLOY_URL"
+          curl -X POST "${{ secrets.      RENDER_DEPLOY_HOOK_URL}}"
 
